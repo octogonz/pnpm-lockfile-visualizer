@@ -1,0 +1,20 @@
+
+# Visual Studio files
+*.user
+*.suo
+.vs/
+
+# Binary folders
+bin/
+obj/
+packages/
+Run/
+
+# SQLite
+*.db
+
+# C# Snapshot Test Outputs
+**/Snapshots/Actual/**
+
+# temp
+temp/
