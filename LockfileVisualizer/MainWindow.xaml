@@ -11,16 +11,16 @@
             <TabControl DockPanel.Dock="Right" Width="300">
                 <TabItem Header="Importers">
                     <DockPanel>
-                        <TextBox x:Name="txtImportersSearch" DockPanel.Dock="Top">Search...</TextBox>
-                        <ListView x:Name="ctlImportersListView">
+                        <TextBox x:Name="txtImportersSearch" DockPanel.Dock="Top" TextChanged="txtImportersSearch_TextChanged">Search...</TextBox>
+                        <ListView x:Name="ctlImportersListView" SelectionChanged="ctlImportersListView_SelectionChanged">
                             <ListViewItem>TEST</ListViewItem>
                         </ListView>
                     </DockPanel>
                 </TabItem>
                 <TabItem Header="Packages">
                     <DockPanel>
-                        <TextBox x:Name="txtPackagesSearch" DockPanel.Dock="Top">Search...</TextBox>
-                        <ListView x:Name="ctlPackagesListView">
+                        <TextBox x:Name="txtPackagesSearch" DockPanel.Dock="Top" TextChanged="txtPackagesSearch_TextChanged">Search...</TextBox>
+                        <ListView x:Name="ctlPackagesListView" SelectionChanged="ctlPackagesListView_SelectionChanged">
                             <ListViewItem>TEST</ListViewItem>
                         </ListView>
                     </DockPanel>
