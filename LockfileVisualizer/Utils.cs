@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using YamlDotNet.RepresentationModel;
 
 namespace LockfileVisualizer
 {
@@ -59,6 +60,21 @@ namespace LockfileVisualizer
                     HighlightingManager.Instance.RegisterHighlighting(name, extension, hl);
                 }
             }
+        }
+
+        public static T GetYamlChild<T>(YamlMappingNode yamlNode, string key) where T : YamlNode
+        {
+            YamlNode? got;
+            yamlNode.Children.TryGetValue(new YamlScalarNode(key), out got);
+            if (got != null)
+            {
+                T? casted = got as T;
+                if (casted != null)
+                {
+                    return casted;
+                }
+            }
+            return null;
         }
 
         static Utils()
