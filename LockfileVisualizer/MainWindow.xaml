@@ -8,6 +8,33 @@
             <Button x:Name="btnReload" Click="btnReload_Click">Reload</Button>
         </StackPanel>
         <DockPanel Margin="5">
+            <StackPanel DockPanel.Dock="Right" Width="400">
+                <StackPanel Orientation="Horizontal">
+                    <Label FontWeight="Bold">Entry name:</Label>
+                    <Label x:Name="txtEntryName">postcss-merge-idents/5.1.1 [__postcss@8.4.16]</Label>
+                </StackPanel>
+
+                <Grid Height="300">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0">Referrers:</Label>
+                    <ListView Grid.Row="1" Grid.Column="0" x:Name="ctlEntryRefs">
+                        <ListViewItem>ITEM</ListViewItem>
+                    </ListView>
+                    <Label Grid.Row="0" Grid.Column="1">Dependencies:</Label>
+                    <ListView Grid.Row="1" Grid.Column="1" x:Name="ctlEntryDeps">
+                        <ListViewItem>ITEM</ListViewItem>
+                    </ListView>
+                </Grid>
+            </StackPanel>
+
             <TabControl DockPanel.Dock="Right" Width="300">
                 <TabItem Header="Importers">
                     <DockPanel>

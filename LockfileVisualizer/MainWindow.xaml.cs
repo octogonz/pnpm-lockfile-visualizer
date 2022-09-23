@@ -15,6 +15,8 @@ namespace LockfileVisualizer
     {
         private Lockfile? _Lockfile = null;
         private readonly DispatcherTimer _updateTimer = new DispatcherTimer();
+        private LockfileEntry? _selectedEntry = null;
+        private bool _selectedEntryChanged = false;
 
         public MainWindow()
         {
@@ -33,7 +35,7 @@ namespace LockfileVisualizer
             txtPackagesSearch.Text = "";
 
             this._updateTimer.Interval = TimeSpan.FromMilliseconds(500);
-            this._updateTimer.Tick += _updateTimer_Tick;
+            this._updateTimer.Tick += this._updateTimer_Tick;
             this._updateTimer.Start();
         }
 
@@ -42,7 +44,7 @@ namespace LockfileVisualizer
             string yamlFilePath = Path.Join(Utils.DataFolder, "pnpm-lock.yaml");
 
             string yamlContent = File.ReadAllText(yamlFilePath);
-            this._Lockfile = new Lockfile(yamlContent);
+            this._Lockfile = new Lockfile(yamlContent, "common/temp/package.json");
 
             ctlYamlEditor.Text = this._Lockfile.YamlContent;
 
@@ -61,7 +63,7 @@ namespace LockfileVisualizer
             {
                 var item = new ListViewItem();
                 item.Tag = x;
-                item.Content = x.PackagePath;
+                item.Content = x.DisplayText;
                 ctlPackagesListView.Items.Add(item);
             }
 
@@ -70,7 +72,7 @@ namespace LockfileVisualizer
             {
                 var item = new ListViewItem();
                 item.Tag = x;
-                item.Content = x.WorkspacePath;
+                item.Content = x.DisplayText;
                 ctlImportersListView.Items.Add(item);
             }
         }
@@ -93,6 +95,38 @@ namespace LockfileVisualizer
 
             ctlImportersListView.Items.Filter = ctlImportersListView_ItemsFilter;
             ctlPackagesListView.Items.Filter = ctlPackagesListView_ItemsFilter;
+
+            if (this._selectedEntry != null)
+            {
+                if (this._selectedEntryChanged)
+                {
+                    ctlYamlEditor.ScrollToLine(this._selectedEntry.LineNumber - 1);
+                    ctlYamlEditor.TextArea.Caret.Line = this._selectedEntry.LineNumber - 1;
+                    ctlYamlEditor.TextArea.Caret.BringCaretToView();
+                }
+
+                this.txtEntryName.Content = this._selectedEntry.DisplayText;
+
+                ctlEntryDeps.Items.Clear();
+                foreach (var dependency in this._selectedEntry.Dependencies)
+                {
+                    var item = new ListViewItem();
+                    item.Tag = dependency;
+                    item.Content = dependency.ResolvedEntry.DisplayText;
+
+                    ctlEntryDeps.Items.Add(item);
+                }
+
+                ctlEntryRefs.Items.Clear();
+                foreach (var referencer in this._selectedEntry.Referencers)
+                {
+                    var item = new ListViewItem();
+                    item.Tag = referencer;
+                    item.Content = referencer.ContainingEntry.DisplayText;
+
+                    ctlEntryRefs.Items.Add(item);
+                }
+            }
         }
 
         private bool ctlImportersListView_ItemsFilter(object itemObject)
@@ -103,10 +137,10 @@ namespace LockfileVisualizer
                 string text = txtImportersSearch.Text.Trim();
                 if (!string.IsNullOrEmpty(text))
                 {
-                    LockfileImporter? importer = item.Tag as LockfileImporter;
-                    if (importer != null)
+                    LockfileEntry? entry = item.Tag as LockfileEntry;
+                    if (entry != null)
                     {
-                        if (importer.WorkspacePath.IndexOf(text, System.StringComparison.InvariantCultureIgnoreCase) >= 0)
+                        if (entry.EntryId.IndexOf(text, System.StringComparison.InvariantCultureIgnoreCase) >= 0)
                         {
                             return true;
                         }
@@ -128,10 +162,10 @@ namespace LockfileVisualizer
                 string text = txtPackagesSearch.Text.Trim();
                 if (!string.IsNullOrEmpty(text))
                 {
-                    LockfilePackage? package = item.Tag as LockfilePackage;
-                    if (package != null)
+                    LockfileEntry? entry = item.Tag as LockfileEntry;
+                    if (entry != null)
                     {
-                        if (package.PackagePath.IndexOf(text, System.StringComparison.InvariantCultureIgnoreCase) >= 0)
+                        if (entry.EntryId.IndexOf(text, System.StringComparison.InvariantCultureIgnoreCase) >= 0)
                         {
                             return true;
                         }
@@ -160,12 +194,10 @@ namespace LockfileVisualizer
             var item = ctlPackagesListView.SelectedItem as ListViewItem;
             if (item != null)
             {
-                LockfilePackage? package = item.Tag as LockfilePackage;
-                if (package != null)
+                LockfileEntry? entry = item.Tag as LockfileEntry;
+                if (entry != null)
                 {
-                    ctlYamlEditor.ScrollToLine(package.LineNumber - 1);
-                    ctlYamlEditor.TextArea.Caret.Line = package.LineNumber - 1;
-                    ctlYamlEditor.TextArea.Caret.BringCaretToView();
+                    this._selectItem(entry);
                 }
             }
         }
@@ -175,14 +207,19 @@ namespace LockfileVisualizer
             var item = ctlImportersListView.SelectedItem as ListViewItem;
             if (item != null)
             {
-                LockfileImporter? importer = item.Tag as LockfileImporter;
-                if (importer != null)
+                LockfileEntry? entry = item.Tag as LockfileEntry;
+                if (entry != null)
                 {
-                    ctlYamlEditor.ScrollToLine(importer.LineNumber - 1);
-                    ctlYamlEditor.TextArea.Caret.Line = importer.LineNumber - 1;
-                    ctlYamlEditor.TextArea.Caret.BringCaretToView();
+                    this._selectItem(entry);
                 }
             }
+        }
+
+        private void _selectItem(LockfileEntry? entry)
+        {
+            this._selectedEntry = entry;
+            this._selectedEntryChanged = true;
+            this._requestUpdateUI();
         }
     }
 }
