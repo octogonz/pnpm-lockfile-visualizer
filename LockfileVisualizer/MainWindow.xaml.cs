@@ -131,7 +131,24 @@ namespace LockfileVisualizer
                 }
 
                 this.txtFolderPath.Content = this._selectedEntry.PackageJsonFolderPath;
+
+                this.ctlReferencerTree.Items.Clear();
+                this.ctlReferencerTree.Items.Add(this._buildTree(this._selectedEntry));
             }
+        }
+
+        private TreeViewItem _buildTree(LockfileEntry entry)
+        {
+            var item = new TreeViewItem();
+            item.Header = entry.DisplayText;
+            item.Tag = entry;
+
+            foreach (var referencer in entry.Referencers)
+            {
+                item.Items.Add(this._buildTree(referencer.ContainingEntry));
+            }
+
+            return item;
         }
 
         private bool ctlImportersListView_ItemsFilter(object itemObject)

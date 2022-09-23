@@ -2,21 +2,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" Title="MainWindow" Height="450" Width="800">
+        mc:Ignorable="d" Title="MainWindow" Height="624" Width="1185">
     <DockPanel Margin="5">
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Button x:Name="btnReload" Click="btnReload_Click">Reload</Button>
         </StackPanel>
         <DockPanel Margin="5">
-            <StackPanel DockPanel.Dock="Right" Width="600">
-                <StackPanel Orientation="Horizontal">
+            <DockPanel DockPanel.Dock="Right" Width="600">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                     <Label FontWeight="Bold">Entry name:</Label>
                     <Label x:Name="txtEntryName">postcss-merge-idents/5.1.1 [__postcss@8.4.16]</Label>
                 </StackPanel>
 
-                <Label x:Name="txtFolderPath" FontFamily="Consolas">common/temp/node_modules/.pnpm/...</Label>
+                <Label DockPanel.Dock="Top" x:Name="txtFolderPath" FontFamily="Consolas">common/temp/node_modules/.pnpm/...</Label>
 
-                <Grid Height="300">
+                <Grid Height="300" DockPanel.Dock="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -26,8 +26,8 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0">Referrers:</Label>
-                    <ListView Grid.Row="1" Grid.Column="0" x:Name="ctlEntryRefsListView" SelectionChanged="ctlEntryRefsListView_SelectionChanged">
+                    <Label Grid.Row="0" Grid.Column="0">Referencer:</Label>
+                    <ListView Grid.Row="1" Grid.Column="0" x:Name="ctlEntryRefsListView" SelectionChanged="ctlEntryRefsListView_SelectionChanged" Margin="0,0,8,0">
                         <ListViewItem>(items)</ListViewItem>
                     </ListView>
                     <Label Grid.Row="0" Grid.Column="1">Dependencies:</Label>
@@ -35,12 +35,16 @@
                         <ListViewItem>(items)</ListViewItem>
                     </ListView>
                 </Grid>
-            </StackPanel>
 
-            <TabControl DockPanel.Dock="Right" Width="300">
+                <Label DockPanel.Dock="Top">Referencer tree:</Label>
+
+                <TreeView x:Name="ctlReferencerTree" />
+            </DockPanel>
+
+            <TabControl DockPanel.Dock="Right" Width="300" Margin="0,0,8,0">
                 <TabItem Header="Importers">
                     <DockPanel>
-                        <TextBox x:Name="txtImportersSearch" DockPanel.Dock="Top" TextChanged="txtImportersSearch_TextChanged">Search...</TextBox>
+                        <TextBox x:Name="txtImportersSearch" DockPanel.Dock="Top" TextChanged="txtImportersSearch_TextChanged" Margin="0,0,0,4">Search...</TextBox>
                         <ListView x:Name="ctlImportersListView" SelectionChanged="ctlImportersListView_SelectionChanged">
                             <ListViewItem>(items)</ListViewItem>
                         </ListView>
@@ -48,7 +52,7 @@
                 </TabItem>
                 <TabItem Header="Packages">
                     <DockPanel>
-                        <TextBox x:Name="txtPackagesSearch" DockPanel.Dock="Top" TextChanged="txtPackagesSearch_TextChanged">Search...</TextBox>
+                        <TextBox x:Name="txtPackagesSearch" DockPanel.Dock="Top" TextChanged="txtPackagesSearch_TextChanged" Margin="0,0,0,4">Search...</TextBox>
                         <ListView x:Name="ctlPackagesListView" SelectionChanged="ctlPackagesListView_SelectionChanged">
                             <ListViewItem>TEST</ListViewItem>
                         </ListView>
