@@ -34,6 +34,9 @@ namespace LockfileVisualizer
             txtImportersSearch.Text = "";
             txtPackagesSearch.Text = "";
 
+            ctlEntryDepsListView.Items.Clear();
+            ctlEntryRefsListView.Items.Clear();
+
             this._updateTimer.Interval = TimeSpan.FromMilliseconds(500);
             this._updateTimer.Tick += this._updateTimer_Tick;
             this._updateTimer.Start();
@@ -107,25 +110,27 @@ namespace LockfileVisualizer
 
                 this.txtEntryName.Content = this._selectedEntry.DisplayText;
 
-                ctlEntryDeps.Items.Clear();
+                ctlEntryDepsListView.Items.Clear();
                 foreach (var dependency in this._selectedEntry.Dependencies)
                 {
                     var item = new ListViewItem();
                     item.Tag = dependency;
                     item.Content = dependency.ResolvedEntry.DisplayText;
 
-                    ctlEntryDeps.Items.Add(item);
+                    ctlEntryDepsListView.Items.Add(item);
                 }
 
-                ctlEntryRefs.Items.Clear();
+                ctlEntryRefsListView.Items.Clear();
                 foreach (var referencer in this._selectedEntry.Referencers)
                 {
                     var item = new ListViewItem();
                     item.Tag = referencer;
                     item.Content = referencer.ContainingEntry.DisplayText;
 
-                    ctlEntryRefs.Items.Add(item);
+                    ctlEntryRefsListView.Items.Add(item);
                 }
+
+                this.txtFolderPath.Content = this._selectedEntry.PackageJsonFolderPath;
             }
         }
 
@@ -211,6 +216,32 @@ namespace LockfileVisualizer
                 if (entry != null)
                 {
                     this._selectItem(entry);
+                }
+            }
+        }
+
+        private void ctlEntryRefsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var item = ctlEntryRefsListView.SelectedItem as ListViewItem;
+            if (item != null)
+            {
+                LockfileDependency? dependency = item.Tag as LockfileDependency;
+                if (dependency != null)
+                {
+                    this._selectItem(dependency.ContainingEntry);
+                }
+            }
+        }
+
+        private void ctlEntryDepsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var item = ctlEntryDepsListView.SelectedItem as ListViewItem;
+            if (item != null)
+            {
+                LockfileDependency? dependency = item.Tag as LockfileDependency;
+                if (dependency != null)
+                {
+                    this._selectItem(dependency.ResolvedEntry);
                 }
             }
         }
